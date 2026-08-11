@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Search, Plus, Package, Filter } from 'lucide-react';
 import api from '../services/api';
 
 const Products: React.FC = () => {
@@ -47,26 +48,38 @@ const Products: React.FC = () => {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
-        <h2>Products</h2>
-        <button className="btn" onClick={() => setIsModalOpen(true)}>+ Add Product</button>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px' }}>
+        <h2 style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <Package size={28} color="var(--accent-secondary)" /> Products
+        </h2>
+        <button className="btn" onClick={() => setIsModalOpen(true)} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Plus size={18} /> Add Product
+        </button>
       </div>
 
-      <div className="card" style={{ marginBottom: '20px', display: 'flex', gap: '15px' }}>
-        <input 
-          type="text" 
-          placeholder="Search name or SKU..." 
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          style={{ padding: '8px', flex: 1, borderRadius: '4px', border: '1px solid var(--border-color)', outline: 'none' }}
-        />
-        <input 
-          type="text" 
-          placeholder="Category..." 
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          style={{ padding: '8px', borderRadius: '4px', border: '1px solid var(--border-color)', outline: 'none' }}
-        />
+      <div className="card" style={{ marginBottom: '25px', display: 'flex', gap: '15px', alignItems: 'center', padding: '15px 20px' }}>
+        <div style={{ position: 'relative', flex: 1 }}>
+          <Search size={18} color="var(--text-muted)" style={{ position: 'absolute', left: '12px', top: '12px' }} />
+          <input 
+            type="text" 
+            className="modern-input"
+            placeholder="Search name or SKU..." 
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            style={{ paddingLeft: '40px' }}
+          />
+        </div>
+        <div style={{ position: 'relative', width: '200px' }}>
+          <Filter size={18} color="var(--text-muted)" style={{ position: 'absolute', left: '12px', top: '12px' }} />
+          <input 
+            type="text" 
+            className="modern-input"
+            placeholder="Category Filter..." 
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            style={{ paddingLeft: '40px' }}
+          />
+        </div>
       </div>
 
       <div className="table-container">
@@ -94,7 +107,7 @@ const Products: React.FC = () => {
                     {p.current_stock}
                     {lowStock && (
                       <span style={{ 
-                        marginLeft: '10px', padding: '2px 6px', borderRadius: '4px', fontSize: '11px', 
+                        marginLeft: '10px', padding: '4px 8px', borderRadius: '12px', fontSize: '11px', 
                         backgroundColor: '#fce8e6', color: '#c5221f', fontWeight: 'bold' 
                       }}>
                         Low Stock
@@ -106,7 +119,15 @@ const Products: React.FC = () => {
               );
             })}
             {products.length === 0 && (
-              <tr><td colSpan={6} style={{ textAlign: 'center' }}>No products found</td></tr>
+              <tr>
+                <td colSpan={6} style={{ textAlign: 'center', padding: '40px 20px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', color: 'var(--text-muted)' }}>
+                    <Package size={48} style={{ opacity: 0.2, marginBottom: '10px' }} />
+                    <p style={{ fontSize: '16px', fontWeight: 500 }}>No products found</p>
+                    <p style={{ fontSize: '14px', marginTop: '5px' }}>Try adjusting your search or add a new product.</p>
+                  </div>
+                </td>
+              </tr>
             )}
           </tbody>
         </table>
@@ -118,18 +139,18 @@ const Products: React.FC = () => {
             <h3 style={{ marginBottom: '20px' }}>Add New Product</h3>
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
               <div style={{ display: 'flex', gap: '15px' }}>
-                <input type="text" name="name" placeholder="Name *" required value={formData.name} onChange={handleInputChange} style={inputStyle} />
-                <input type="text" name="sku" placeholder="SKU *" required value={formData.sku} onChange={handleInputChange} style={inputStyle} />
+                <input type="text" className="modern-input" name="name" placeholder="Name *" required value={formData.name} onChange={handleInputChange} />
+                <input type="text" className="modern-input" name="sku" placeholder="SKU *" required value={formData.sku} onChange={handleInputChange} />
               </div>
               <div style={{ display: 'flex', gap: '15px' }}>
-                <input type="text" name="category" placeholder="Category" value={formData.category} onChange={handleInputChange} style={inputStyle} />
-                <input type="number" name="unit_price" placeholder="Unit Price *" required step="0.01" value={formData.unit_price} onChange={handleInputChange} style={inputStyle} />
+                <input type="text" className="modern-input" name="category" placeholder="Category" value={formData.category} onChange={handleInputChange} />
+                <input type="number" className="modern-input" name="unit_price" placeholder="Unit Price *" required step="0.01" value={formData.unit_price} onChange={handleInputChange} />
               </div>
               <div style={{ display: 'flex', gap: '15px' }}>
-                <input type="number" name="current_stock" placeholder="Initial Stock" value={formData.current_stock} onChange={handleInputChange} style={inputStyle} />
-                <input type="number" name="min_stock_alert" placeholder="Min Stock Alert" value={formData.min_stock_alert} onChange={handleInputChange} style={inputStyle} />
+                <input type="number" className="modern-input" name="current_stock" placeholder="Initial Stock" value={formData.current_stock} onChange={handleInputChange} />
+                <input type="number" className="modern-input" name="min_stock_alert" placeholder="Min Stock Alert" value={formData.min_stock_alert} onChange={handleInputChange} />
               </div>
-              <input type="text" name="location" placeholder="Location (e.g., Aisle 4)" value={formData.location} onChange={handleInputChange} style={inputStyle} />
+              <input type="text" className="modern-input" name="location" placeholder="Location (e.g., Aisle 4)" value={formData.location} onChange={handleInputChange} />
               
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '10px' }}>
                 <button type="button" className="btn" style={{ backgroundColor: 'var(--text-muted)' }} onClick={() => setIsModalOpen(false)}>Cancel</button>
@@ -145,15 +166,12 @@ const Products: React.FC = () => {
 
 const modalOverlayStyle: React.CSSProperties = {
   position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-  backgroundColor: 'rgba(0,0,0,0.4)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000
+  backgroundColor: 'rgba(0,0,0,0.4)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000,
+  backdropFilter: 'blur(5px)'
 };
 
 const modalContentStyle: React.CSSProperties = {
   width: '500px', maxHeight: '90vh', overflowY: 'auto'
-};
-
-const inputStyle = {
-  padding: '10px', borderRadius: '4px', border: '1px solid var(--border-color)', flex: 1, outline: 'none'
 };
 
 export default Products;

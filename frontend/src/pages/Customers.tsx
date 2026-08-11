@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Search, Plus, Users, Calendar, Filter } from 'lucide-react';
 import api from '../services/api';
 
 const Customers: React.FC = () => {
@@ -47,24 +48,33 @@ const Customers: React.FC = () => {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
-        <h2>Customers</h2>
-        <button className="btn" onClick={() => setIsModalOpen(true)}>+ Add Customer</button>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px' }}>
+        <h2 style={{ display: 'flex', alignItems: 'center', gap: '10px' }}><Users size={28} color="var(--accent-secondary)" /> Customers</h2>
+        <button className="btn" onClick={() => setIsModalOpen(true)} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Plus size={18} /> Add Customer
+        </button>
       </div>
 
-      <div className="card" style={{ marginBottom: '20px', display: 'flex', gap: '15px' }}>
-        <input 
-          type="text" 
-          placeholder="Search name, mobile, business..." 
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          style={{ padding: '8px', flex: 1, borderRadius: '4px', border: '1px solid var(--border-color)', outline: 'none' }}
-        />
-        <select 
-          value={status} 
-          onChange={(e) => setStatus(e.target.value)}
-          style={{ padding: '8px', borderRadius: '4px', border: '1px solid var(--border-color)', outline: 'none' }}
-        >
+      <div className="card" style={{ marginBottom: '25px', display: 'flex', gap: '15px', alignItems: 'center', padding: '15px 20px' }}>
+        <div style={{ position: 'relative', flex: 1 }}>
+          <Search size={18} color="var(--text-muted)" style={{ position: 'absolute', left: '12px', top: '12px' }} />
+          <input 
+            type="text" 
+            className="modern-input"
+            placeholder="Search name, mobile, business..." 
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            style={{ paddingLeft: '40px' }}
+          />
+        </div>
+        <div style={{ position: 'relative', width: '200px' }}>
+          <Filter size={18} color="var(--text-muted)" style={{ position: 'absolute', left: '12px', top: '12px' }} />
+          <select 
+            className="modern-input"
+            value={status} 
+            onChange={(e) => setStatus(e.target.value)}
+            style={{ paddingLeft: '40px', appearance: 'none' }}
+          >
           <option value="">All Statuses</option>
           <option value="Lead">Lead</option>
           <option value="Active">Active</option>
@@ -107,7 +117,15 @@ const Customers: React.FC = () => {
               </tr>
             ))}
             {customers.length === 0 && (
-              <tr><td colSpan={6} style={{ textAlign: 'center' }}>No customers found</td></tr>
+              <tr>
+                <td colSpan={6} style={{ textAlign: 'center', padding: '40px 20px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', color: 'var(--text-muted)' }}>
+                    <Users size={48} style={{ opacity: 0.2, marginBottom: '10px' }} />
+                    <p style={{ fontSize: '16px', fontWeight: 500 }}>No customers found</p>
+                    <p style={{ fontSize: '14px', marginTop: '5px' }}>Try adjusting your search or add a new customer.</p>
+                  </div>
+                </td>
+              </tr>
             )}
           </tbody>
         </table>
