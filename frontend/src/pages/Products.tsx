@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Plus, Package, Filter } from 'lucide-react';
+import toast from 'react-hot-toast';
 import api from '../services/api';
 
 const Products: React.FC = () => {
@@ -10,6 +11,9 @@ const Products: React.FC = () => {
   const [formData, setFormData] = useState({
     name: '', sku: '', category: '', unit_price: '', current_stock: '', min_stock_alert: '', location: ''
   });
+
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const canAddProduct = ['Admin', 'Warehouse'].includes(user.role);
 
   const fetchProducts = async () => {
     try {
@@ -39,10 +43,11 @@ const Products: React.FC = () => {
       });
       setIsModalOpen(false);
       fetchProducts();
+      toast.success('Product added successfully!');
       setFormData({ name: '', sku: '', category: '', unit_price: '', current_stock: '', min_stock_alert: '', location: '' });
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      alert('Error creating product');
+      toast.error(err.response?.data?.message || 'Error creating product');
     }
   };
 
@@ -52,9 +57,11 @@ const Products: React.FC = () => {
         <h2 style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <Package size={28} color="var(--accent-secondary)" /> Products
         </h2>
-        <button className="btn" onClick={() => setIsModalOpen(true)} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Plus size={18} /> Add Product
-        </button>
+        {canAddProduct && (
+          <button className="btn" onClick={() => setIsModalOpen(true)} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Plus size={18} /> Add Product
+          </button>
+        )}
       </div>
 
       <div className="card" style={{ marginBottom: '25px', display: 'flex', gap: '15px', alignItems: 'center', padding: '15px 20px' }}>

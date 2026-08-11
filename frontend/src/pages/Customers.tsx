@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Plus, Users, Filter } from 'lucide-react';
+import toast from 'react-hot-toast';
 import api from '../services/api';
 
 const Customers: React.FC = () => {
@@ -11,6 +12,9 @@ const Customers: React.FC = () => {
     name: '', mobile: '', email: '', business_name: '', gst_number: '', 
     customer_type: 'Retail', address: '', status: 'Lead', follow_up_date: '', notes: ''
   });
+  
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const canAddCustomer = ['Admin', 'Sales'].includes(user.role);
 
   const fetchCustomers = async () => {
     try {
@@ -35,14 +39,15 @@ const Customers: React.FC = () => {
       await api.post('/customers', formData);
       setIsModalOpen(false);
       fetchCustomers();
+      toast.success('Customer created successfully!');
       // Reset form
       setFormData({
         name: '', mobile: '', email: '', business_name: '', gst_number: '', 
         customer_type: 'Retail', address: '', status: 'Lead', follow_up_date: '', notes: ''
       });
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      alert('Error creating customer');
+      toast.error(err.response?.data?.message || 'Error creating customer');
     }
   };
 
@@ -50,9 +55,11 @@ const Customers: React.FC = () => {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px' }}>
         <h2 style={{ display: 'flex', alignItems: 'center', gap: '10px' }}><Users size={28} color="var(--accent-secondary)" /> Customers</h2>
-        <button className="btn" onClick={() => setIsModalOpen(true)} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Plus size={18} /> Add Customer
-        </button>
+        {canAddCustomer && (
+          <button className="btn" onClick={() => setIsModalOpen(true)} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Plus size={18} /> Add Customer
+          </button>
+        )}
       </div>
 
       <div className="card" style={{ marginBottom: '25px', display: 'flex', gap: '15px', alignItems: 'center', padding: '15px 20px' }}>

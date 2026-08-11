@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FileText, Plus, X, Search, FileSignature } from 'lucide-react';
+import toast from 'react-hot-toast';
 import api from '../services/api';
 
 const Challans: React.FC = () => {
@@ -14,6 +15,9 @@ const Challans: React.FC = () => {
   const [products, setProducts] = useState<any[]>([]);
   const [formData, setFormData] = useState({ customer_id: '', status: 'Draft' });
   const [items, setItems] = useState<any[]>([{ product_id: '', quantity: 1, unit_price: 0 }]);
+
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const canCreateChallan = ['Admin', 'Sales'].includes(user.role);
 
   useEffect(() => {
     fetchChallans();
@@ -76,14 +80,14 @@ const Challans: React.FC = () => {
         status: formData.status,
         items: payloadItems
       });
-      alert('Challan created successfully!');
+      toast.success('Challan created successfully!');
       setFormData({ customer_id: '', status: 'Draft' });
       setItems([{ product_id: '', quantity: 1, unit_price: 0 }]);
       fetchChallans();
       setActiveTab('history');
     } catch (err: any) {
       console.error(err);
-      alert(err.response?.data?.message || 'Error creating challan');
+      toast.error(err.response?.data?.message || 'Error creating challan');
     }
   };
 
@@ -105,18 +109,20 @@ const Challans: React.FC = () => {
         >
           <FileText size={18} /> Challan History
         </button>
-        <button 
-          className="btn" 
-          style={{ 
-            backgroundColor: activeTab === 'create' ? 'var(--accent-primary)' : 'transparent', 
-            color: activeTab === 'create' ? '#fff' : 'var(--text-muted)',
-            boxShadow: activeTab === 'create' ? 'var(--shadow-sm)' : 'none',
-            display: 'flex', alignItems: 'center', gap: '8px'
-          }} 
-          onClick={() => setActiveTab('create')}
-        >
-          <Plus size={18} /> Create New Challan
-        </button>
+        {canCreateChallan && (
+          <button 
+            className="btn" 
+            style={{ 
+              backgroundColor: activeTab === 'create' ? 'var(--accent-primary)' : 'transparent', 
+              color: activeTab === 'create' ? '#fff' : 'var(--text-muted)',
+              boxShadow: activeTab === 'create' ? 'var(--shadow-sm)' : 'none',
+              display: 'flex', alignItems: 'center', gap: '8px'
+            }} 
+            onClick={() => setActiveTab('create')}
+          >
+            <Plus size={18} /> Create New Challan
+          </button>
+        )}
       </div>
 
       {activeTab === 'history' && (
