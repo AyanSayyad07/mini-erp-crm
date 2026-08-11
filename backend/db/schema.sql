@@ -29,7 +29,7 @@ CREATE TABLE products (
     name VARCHAR(255) NOT NULL,
     sku VARCHAR(100) UNIQUE NOT NULL,
     category VARCHAR(100),
-    unit_price DECIMAL(10, 2) NOT NULL,
+    unit_price FLOAT NOT NULL,
     current_stock INT DEFAULT 0,
     min_stock_alert INT DEFAULT 0,
     location VARCHAR(255),
@@ -64,6 +64,6 @@ CREATE TABLE challan_items (
     challan_id INT REFERENCES challans(id) ON DELETE CASCADE,
     product_id INT REFERENCES products(id),
     product_name_snapshot VARCHAR(255) NOT NULL,
-    unit_price_snapshot DECIMAL(10, 2) NOT NULL,
+    unit_price_snapshot FLOAT NOT NULL,
     quantity INT NOT NULL
 );

@@ -5,6 +5,7 @@ import authRoutes from './routes/authRoutes';
 import customerRoutes from './routes/customerRoutes';
 import productRoutes from './routes/productRoutes';
 import challanRoutes from './routes/challanRoutes';
+import { initDb } from './config/db';
 
 dotenv.config();
 
@@ -25,6 +26,8 @@ app.get('/', (req, res) => {
   res.json({ status: 'API is running' });
 });
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+initDb().then(() => {
+  app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+  });
 });

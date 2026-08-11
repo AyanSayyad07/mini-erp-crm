@@ -1,14 +1,19 @@
 :root {
   --bg-color: #F7F9FC; /* Soft off-white */
-  --card-bg: #FFFFFF; /* Pure white */
+  --card-bg: rgba(255, 255, 255, 0.9); /* Pure white glassmorphism base */
   --accent-primary: #8FBC8F; /* Soft sage green */
   --accent-secondary: #778899; /* Light slate gray/blue */
   --text-dark: #333333; /* Gentle dark gray */
   --text-muted: #666666;
   --border-color: #E2E8F0;
   --hover-bg: #E8F0E8; /* Very light sage for hover */
-  --sidebar-bg: #FFFFFF;
+  --sidebar-bg: rgba(255, 255, 255, 0.7);
   --sidebar-active: #E8F0E8;
+  
+  /* Modern Shadows */
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.03);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.05);
+  --shadow-hover: 0 12px 32px rgba(0, 0, 0, 0.08);
 }
 
 * {
@@ -19,7 +24,9 @@
 
 body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  background-color: var(--bg-color);
+  /* Subtle gradient background */
+  background: linear-gradient(135deg, #F7F9FC 0%, #E6EAF0 100%);
+  background-attachment: fixed;
   color: var(--text-dark);
   -webkit-font-smoothing: antialiased;
 }
@@ -27,10 +34,17 @@ body {
 /* Utilities */
 .card {
   background-color: var(--card-bg);
-  border-radius: 8px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  border-radius: 12px;
+  box-shadow: var(--shadow-md);
   padding: 20px;
-  border: 1px solid var(--border-color);
+  border: 1px solid rgba(255, 255, 255, 0.5); /* Glass edge */
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
 }
 
 .btn {
@@ -38,22 +52,31 @@ body {
   color: white;
   border: none;
   padding: 10px 20px;
-  border-radius: 6px;
+  border-radius: 8px; /* Slightly softer */
   cursor: pointer;
   font-weight: 500;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-sm);
 }
 
 .btn:hover {
   background-color: #79a379;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .table-container {
   overflow-x: auto;
   background-color: var(--card-bg);
-  border-radius: 8px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.table-container:hover {
+  box-shadow: var(--shadow-hover);
 }
 
 .table {
@@ -68,7 +91,7 @@ body {
 }
 
 .table th {
-  background-color: #F8FAFC;
+  background-color: transparent;
   font-weight: 600;
   color: var(--text-muted);
 }
