@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ShieldCheck, User, Sun, Moon } from 'lucide-react';
+import { User, Sun, Moon } from 'lucide-react';
 import { useTheme } from '../hooks/useTheme';
 import api from '../services/api';
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FileText, Plus, X, Search, FileSignature, Download, LayoutTemplate, List } from 'lucide-react';
+import { FileText, Plus, X, FileSignature, Download, LayoutTemplate, List } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import Confetti from 'react-confetti';
