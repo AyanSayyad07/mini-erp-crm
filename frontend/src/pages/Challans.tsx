@@ -239,7 +239,7 @@ const modalContentStyle: React.CSSProperties = {
   width: '600px', maxHeight: '90vh', overflowY: 'auto'
 };
 
-const inputStyle = {
+const inputStyle: React.CSSProperties = {
   padding: '10px', borderRadius: '4px', border: '1px solid var(--border-color)', outline: 'none', width: '100%', boxSizing: 'border-box'
 };
 
