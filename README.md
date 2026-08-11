@@ -4,6 +4,10 @@
 
 Loop Distribution.co is a modern, premium, and highly dynamic Enterprise Resource Planning (ERP) and Customer Relationship Management (CRM) application. It is designed to handle retail, wholesale, and distribution operations with an unparalleled user experience.
 
+## 🌐 Live Demo & API Links
+
+*   **Frontend (Live App):** [https://loop-distribution.onrender.com](https://loop-distribution.onrender.com) *(Update this if your Render/Vercel URL is different)*
+*   **Backend API (Live Server):** [https://mini-erp-crm-ekqg.onrender.com](https://mini-erp-crm-ekqg.onrender.com)
 ## 🚀 Key Features
 
 *   **Global Command Palette:** Press `Ctrl + K` (or `Cmd + K`) anywhere to instantly search, navigate pages, and execute commands without touching the mouse.
