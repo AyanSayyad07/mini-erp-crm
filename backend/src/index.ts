@@ -5,6 +5,7 @@ import authRoutes from './routes/authRoutes';
 import customerRoutes from './routes/customerRoutes';
 import productRoutes from './routes/productRoutes';
 import challanRoutes from './routes/challanRoutes';
+import userRoutes from './routes/userRoutes';
 import { initDb } from './config/db';
 
 dotenv.config();
@@ -20,6 +21,7 @@ app.use('/auth', authRoutes);
 app.use('/customers', customerRoutes);
 app.use('/products', productRoutes);
 app.use('/challans', challanRoutes);
+app.use('/users', userRoutes);
 
 // Health check endpoint
 app.get('/', (req, res) => {

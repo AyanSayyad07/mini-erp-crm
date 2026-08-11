@@ -96,6 +96,11 @@ const Layout: React.FC = () => {
               <FileText size={20} /> Sales Challans
             </NavLink>
           )}
+          {user.role === 'Admin' && (
+            <NavLink to="/users" style={navLinkStyle} onClick={() => setIsMobileMenuOpen(false)}>
+              <Shield size={20} /> Users
+            </NavLink>
+          )}
         </nav>
         
         <div style={{ padding: '20px', borderTop: '1px solid var(--border-glass)' }}>

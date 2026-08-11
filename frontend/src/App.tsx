@@ -6,6 +6,7 @@ import Dashboard from './pages/Dashboard';
 import Customers from './pages/Customers';
 import Products from './pages/Products';
 import Challans from './pages/Challans';
+import Users from './pages/Users';
 import Login from './pages/Login';
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -41,7 +42,10 @@ const App: React.FC = () => {
           <Route path="customers" element={<Customers />} />
           <Route path="products" element={<Products />} />
           <Route path="challans" element={<Challans />} />
+          <Route path="users" element={<Users />} />
         </Route>
+        
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
   );

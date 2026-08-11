@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { FileText, Plus, X, Search, FileSignature } from 'lucide-react';
+import { FileText, Plus, X, Search, FileSignature, Download } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../services/api';
+import { generateInvoicePDF } from '../utils/pdf';
 
 const Challans: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'create' | 'history'>('history');
@@ -225,9 +226,14 @@ const Challans: React.FC = () => {
           <div className="card" style={modalContentStyle} onClick={e => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px', borderBottom: '1px solid var(--border-color)', paddingBottom: '15px' }}>
               <h2 style={{ display: 'flex', alignItems: 'center', gap: '10px' }}><FileSignature size={24} color="var(--accent-primary)" /> Challan #{selectedChallan.challan_number}</h2>
-              <button onClick={() => setSelectedChallan(null)} style={{ border: 'none', background: 'var(--hover-bg)', width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
-                <X size={18} color="var(--text-muted)" />
-              </button>
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <button className="btn" onClick={() => generateInvoicePDF(selectedChallan)} style={{ backgroundColor: 'var(--card-bg)', color: 'var(--text-dark)', border: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 12px', fontSize: '14px' }}>
+                  <Download size={16} /> Download PDF
+                </button>
+                <button onClick={() => setSelectedChallan(null)} style={{ border: 'none', background: 'var(--hover-bg)', width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+                  <X size={18} color="var(--text-muted)" />
+                </button>
+              </div>
             </div>
             <div style={{ display: 'flex', gap: '40px', marginBottom: '20px', backgroundColor: 'var(--bg-color)', padding: '15px', borderRadius: '8px' }}>
               <div style={{ flex: 1 }}>

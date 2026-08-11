@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Plus, Package, Filter } from 'lucide-react';
+import { Search, Plus, Package, Filter, Download } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../services/api';
+import { exportToCSV } from '../utils/export';
 
 const Products: React.FC = () => {
   const [products, setProducts] = useState<any[]>([]);
@@ -57,11 +58,16 @@ const Products: React.FC = () => {
         <h2 style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <Package size={28} color="var(--accent-secondary)" /> Products
         </h2>
-        {canAddProduct && (
-          <button className="btn" onClick={() => setIsModalOpen(true)} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Plus size={18} /> Add Product
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <button className="btn" onClick={() => exportToCSV(products, 'products.csv')} style={{ backgroundColor: 'var(--card-bg)', color: 'var(--text-dark)', border: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Download size={18} /> Export CSV
           </button>
-        )}
+          {canAddProduct && (
+            <button className="btn" onClick={() => setIsModalOpen(true)} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Plus size={18} /> Add Product
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="card" style={{ marginBottom: '25px', display: 'flex', gap: '15px', alignItems: 'center', padding: '15px 20px' }}>

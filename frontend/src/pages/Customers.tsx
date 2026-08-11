@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Plus, Users, Filter } from 'lucide-react';
+import { Search, Plus, Users, Filter, Download } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../services/api';
+import { exportToCSV } from '../utils/export';
 
 const Customers: React.FC = () => {
   const [customers, setCustomers] = useState<any[]>([]);
@@ -55,11 +56,16 @@ const Customers: React.FC = () => {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px' }}>
         <h2 style={{ display: 'flex', alignItems: 'center', gap: '10px' }}><Users size={28} color="var(--accent-secondary)" /> Customers</h2>
-        {canAddCustomer && (
-          <button className="btn" onClick={() => setIsModalOpen(true)} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Plus size={18} /> Add Customer
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <button className="btn" onClick={() => exportToCSV(customers, 'customers.csv')} style={{ backgroundColor: 'var(--card-bg)', color: 'var(--text-dark)', border: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Download size={18} /> Export CSV
           </button>
-        )}
+          {canAddCustomer && (
+            <button className="btn" onClick={() => setIsModalOpen(true)} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Plus size={18} /> Add Customer
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="card" style={{ marginBottom: '25px', display: 'flex', gap: '15px', alignItems: 'center', padding: '15px 20px' }}>
