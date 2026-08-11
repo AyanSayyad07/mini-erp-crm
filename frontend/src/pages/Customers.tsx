@@ -3,9 +3,11 @@ import { Search, Plus, Users, Filter, Download } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../services/api';
 import { exportToCSV } from '../utils/export';
+import Skeleton from '../components/Skeleton';
 
 const Customers: React.FC = () => {
   const [customers, setCustomers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -18,11 +20,14 @@ const Customers: React.FC = () => {
   const canAddCustomer = ['Admin', 'Sales'].includes(user.role);
 
   const fetchCustomers = async () => {
+    setLoading(true);
     try {
-      const res = await api.get('/customers', { params: { search, status, limit: 100 } });
-      setCustomers(res.data.data);
+      const res = await api.get('/customers', { params: { search, status } });
+      setCustomers(res.data);
     } catch (err) {
       console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -109,24 +114,37 @@ const Customers: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {customers.map((c) => (
-              <tr key={c.id}>
-                <td>
-                  <strong>{c.name}</strong><br/>
-                  <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{c.email}</span>
-                </td>
-                <td>{c.business_name || '-'}</td>
-                <td>{c.mobile}</td>
-                <td>{c.customer_type}</td>
-                <td>
-                  <span className={`badge ${c.status === 'Active' ? 'badge-success' : c.status === 'Inactive' ? 'badge-danger' : 'badge-info'}`}>
-                    {c.status}
-                  </span>
-                </td>
-                <td>{c.follow_up_date ? new Date(c.follow_up_date).toLocaleDateString() : '-'}</td>
-              </tr>
-            ))}
-            {customers.length === 0 && (
+            {loading ? (
+              Array(5).fill(0).map((_, i) => (
+                <tr key={i}>
+                  <td><Skeleton width="150px" height="20px" /></td>
+                  <td><Skeleton width="120px" height="20px" /></td>
+                  <td><Skeleton width="100px" height="20px" /></td>
+                  <td><Skeleton width="60px" height="20px" /></td>
+                  <td><Skeleton width="80px" height="24px" borderRadius="12px" /></td>
+                  <td><Skeleton width="100px" height="20px" /></td>
+                </tr>
+              ))
+            ) : (
+              customers.map((c) => (
+                <tr key={c.id}>
+                  <td>
+                    <strong>{c.name}</strong><br/>
+                    <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{c.email}</span>
+                  </td>
+                  <td>{c.business_name || '-'}</td>
+                  <td>{c.mobile}</td>
+                  <td>{c.customer_type}</td>
+                  <td>
+                    <span className={`badge ${c.status === 'Active' ? 'badge-success' : c.status === 'Inactive' ? 'badge-danger' : 'badge-info'}`}>
+                      {c.status}
+                    </span>
+                  </td>
+                  <td>{c.follow_up_date ? new Date(c.follow_up_date).toLocaleDateString() : '-'}</td>
+                </tr>
+              ))
+            )}
+            {!loading && customers.length === 0 && (
               <tr>
                 <td colSpan={6} style={{ textAlign: 'center', padding: '40px 20px' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', color: 'var(--text-muted)' }}>

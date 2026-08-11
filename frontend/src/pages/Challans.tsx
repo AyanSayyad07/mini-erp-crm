@@ -1,15 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { FileText, Plus, X, Search, FileSignature, Download } from 'lucide-react';
+import { FileText, Plus, X, Search, FileSignature, Download, LayoutTemplate, List } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
+import Confetti from 'react-confetti';
 import api from '../services/api';
 import { generateInvoicePDF } from '../utils/pdf';
 
+const COLUMNS = ['Draft', 'Confirmed', 'Delivered', 'Paid'];
+
 const Challans: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'create' | 'history'>('history');
+  const [viewMode, setViewMode] = useState<'list' | 'board'>('board');
   
   // History State
   const [challans, setChallans] = useState<any[]>([]);
   const [selectedChallan, setSelectedChallan] = useState<any>(null);
+  const [showConfetti, setShowConfetti] = useState(false);
 
   // Create State
   const [customers, setCustomers] = useState<any[]>([]);
@@ -25,6 +31,13 @@ const Challans: React.FC = () => {
     fetchCustomersAndProducts();
   }, []);
 
+  useEffect(() => {
+    if (showConfetti) {
+      const timer = setTimeout(() => setShowConfetti(false), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [showConfetti]);
+
   const fetchChallans = async () => {
     try {
       const res = await api.get('/challans');
@@ -37,9 +50,9 @@ const Challans: React.FC = () => {
   const fetchCustomersAndProducts = async () => {
     try {
       const custRes = await api.get('/customers', { params: { limit: 100 } });
-      setCustomers(custRes.data.data);
+      setCustomers(custRes.data.data || custRes.data);
       const prodRes = await api.get('/products', { params: { limit: 100 } });
-      setProducts(prodRes.data.data);
+      setProducts(prodRes.data.data || prodRes.data);
     } catch (err) {
       console.error(err);
     }
@@ -92,79 +105,202 @@ const Challans: React.FC = () => {
     }
   };
 
+  const onDragEnd = async (result: any) => {
+    const { destination, source, draggableId } = result;
+
+    if (!destination) return;
+    if (destination.droppableId === source.droppableId && destination.index === source.index) return;
+
+    const newStatus = destination.droppableId;
+    
+    // Optimistic UI update
+    const previousChallans = [...challans];
+    const updatedChallans = challans.map(c => {
+      if (c.id === Number(draggableId)) {
+        return { ...c, status: newStatus };
+      }
+      return c;
+    });
+    setChallans(updatedChallans);
+
+    if (newStatus === 'Delivered' || newStatus === 'Paid') {
+      setShowConfetti(true);
+    }
+
+    try {
+      await api.put(`/challans/${draggableId}/status`, { status: newStatus });
+      toast.success(`Challan moved to ${newStatus}`);
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to update status');
+      setChallans(previousChallans); // Rollback
+    }
+  };
+
   const totalAmount = items.reduce((sum, item) => sum + (item.quantity * item.unit_price), 0);
   const totalQty = items.reduce((sum, item) => sum + Number(item.quantity), 0);
 
+  const renderKanbanBoard = () => {
+    return (
+      <DragDropContext onDragEnd={onDragEnd}>
+        <div style={{ display: 'flex', gap: '20px', overflowX: 'auto', paddingBottom: '20px' }}>
+          {COLUMNS.map(col => {
+            const colChallans = challans.filter(c => c.status === col || (!COLUMNS.includes(c.status) && col === 'Draft'));
+            return (
+              <Droppable key={col} droppableId={col}>
+                {(provided, snapshot) => (
+                  <div
+                    ref={provided.innerRef}
+                    {...provided.droppableProps}
+                    style={{
+                      flex: 1,
+                      minWidth: '280px',
+                      backgroundColor: snapshot.isDraggingOver ? 'var(--hover-bg)' : 'var(--card-bg)',
+                      border: '1px solid var(--border-color)',
+                      borderRadius: '12px',
+                      padding: '15px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '15px',
+                      transition: 'background-color 0.2s ease',
+                      boxShadow: 'var(--shadow-sm)'
+                    }}
+                  >
+                    <h3 style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '15px', color: 'var(--text-dark)' }}>
+                      {col} <span style={{ backgroundColor: 'var(--bg-color)', padding: '2px 8px', borderRadius: '12px', fontSize: '12px', color: 'var(--text-muted)' }}>{colChallans.length}</span>
+                    </h3>
+                    
+                    <div style={{ minHeight: '100px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                      {colChallans.map((c, index) => (
+                        <Draggable key={c.id.toString()} draggableId={c.id.toString()} index={index}>
+                          {(provided, snapshot) => (
+                            <div
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
+                              onClick={() => openChallanDetails(c.id)}
+                              style={{
+                                padding: '15px',
+                                backgroundColor: 'var(--bg-color)',
+                                borderRadius: '8px',
+                                border: '1px solid var(--border-color)',
+                                cursor: 'grab',
+                                boxShadow: snapshot.isDragging ? 'var(--shadow-lg)' : 'none',
+                                transform: snapshot.isDragging ? 'scale(1.02)' : 'scale(1)',
+                                ...provided.draggableProps.style
+                              }}
+                            >
+                              <div style={{ fontWeight: 600, color: 'var(--text-dark)', marginBottom: '5px' }}>{c.challan_number}</div>
+                              <div style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '10px' }}>{c.customer_name || 'Unknown'}</div>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12px' }}>
+                                <span style={{ color: 'var(--accent-primary)', fontWeight: 500 }}>Qty: {c.total_quantity}</span>
+                                <span style={{ color: 'var(--text-muted)' }}>{new Date(c.created_at).toLocaleDateString()}</span>
+                              </div>
+                            </div>
+                          )}
+                        </Draggable>
+                      ))}
+                      {provided.placeholder}
+                    </div>
+                  </div>
+                )}
+              </Droppable>
+            );
+          })}
+        </div>
+      </DragDropContext>
+    );
+  };
+
+  const renderTableView = () => (
+    <div className="table-container">
+      <table className="table">
+        <thead>
+          <tr>
+            <th>Challan #</th>
+            <th>Customer</th>
+            <th>Total Qty</th>
+            <th>Status</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {challans.map((c) => (
+            <tr key={c.id} style={{ cursor: 'pointer' }} onClick={() => openChallanDetails(c.id)}>
+              <td><strong>{c.challan_number}</strong></td>
+              <td>{c.customer_name || '-'}</td>
+              <td>{c.total_quantity}</td>
+              <td>
+                <span className={`badge ${c.status === 'Confirmed' || c.status === 'Paid' ? 'badge-success' : c.status === 'Delivered' ? 'badge-info' : 'badge-warning'}`}>
+                  {c.status}
+                </span>
+              </td>
+              <td>{new Date(c.created_at).toLocaleDateString()}</td>
+            </tr>
+          ))}
+          {challans.length === 0 && (
+            <tr>
+              <td colSpan={5} style={{ textAlign: 'center', padding: '40px 20px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', color: 'var(--text-muted)' }}>
+                  <FileSignature size={48} style={{ opacity: 0.2, marginBottom: '10px' }} />
+                  <p style={{ fontSize: '16px', fontWeight: 500 }}>No challans generated yet</p>
+                </div>
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </div>
+  );
+
   return (
     <div>
-      <div style={{ display: 'flex', gap: '20px', marginBottom: '25px', borderBottom: '1px solid var(--border-color)', paddingBottom: '15px' }}>
-        <button 
-          className="btn" 
-          style={{ 
-            backgroundColor: activeTab === 'history' ? 'var(--accent-primary)' : 'transparent', 
-            color: activeTab === 'history' ? '#fff' : 'var(--text-muted)',
-            boxShadow: activeTab === 'history' ? 'var(--shadow-sm)' : 'none',
-            display: 'flex', alignItems: 'center', gap: '8px'
-          }} 
-          onClick={() => setActiveTab('history')}
-        >
-          <FileText size={18} /> Challan History
-        </button>
-        {canCreateChallan && (
+      {showConfetti && <Confetti width={window.innerWidth} height={window.innerHeight} recycle={false} numberOfPieces={500} />}
+      
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px', borderBottom: '1px solid var(--border-color)', paddingBottom: '15px' }}>
+        <div style={{ display: 'flex', gap: '20px' }}>
           <button 
             className="btn" 
             style={{ 
-              backgroundColor: activeTab === 'create' ? 'var(--accent-primary)' : 'transparent', 
-              color: activeTab === 'create' ? '#fff' : 'var(--text-muted)',
-              boxShadow: activeTab === 'create' ? 'var(--shadow-sm)' : 'none',
+              backgroundColor: activeTab === 'history' ? 'var(--accent-primary)' : 'transparent', 
+              color: activeTab === 'history' ? '#fff' : 'var(--text-muted)',
+              boxShadow: activeTab === 'history' ? 'var(--shadow-sm)' : 'none',
               display: 'flex', alignItems: 'center', gap: '8px'
             }} 
-            onClick={() => setActiveTab('create')}
+            onClick={() => setActiveTab('history')}
           >
-            <Plus size={18} /> Create New Challan
+            <FileText size={18} /> Challan History
           </button>
+          {canCreateChallan && (
+            <button 
+              className="btn" 
+              style={{ 
+                backgroundColor: activeTab === 'create' ? 'var(--accent-primary)' : 'transparent', 
+                color: activeTab === 'create' ? '#fff' : 'var(--text-muted)',
+                boxShadow: activeTab === 'create' ? 'var(--shadow-sm)' : 'none',
+                display: 'flex', alignItems: 'center', gap: '8px'
+              }} 
+              onClick={() => setActiveTab('create')}
+            >
+              <Plus size={18} /> Create New Challan
+            </button>
+          )}
+        </div>
+
+        {activeTab === 'history' && (
+          <div style={{ display: 'flex', backgroundColor: 'var(--hover-bg)', padding: '4px', borderRadius: '8px' }}>
+            <button onClick={() => setViewMode('board')} style={{ padding: '6px 12px', border: 'none', background: viewMode === 'board' ? 'var(--card-bg)' : 'transparent', color: viewMode === 'board' ? 'var(--text-dark)' : 'var(--text-muted)', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', boxShadow: viewMode === 'board' ? 'var(--shadow-sm)' : 'none', transition: 'all 0.2s' }}>
+              <LayoutTemplate size={16} /> Board
+            </button>
+            <button onClick={() => setViewMode('list')} style={{ padding: '6px 12px', border: 'none', background: viewMode === 'list' ? 'var(--card-bg)' : 'transparent', color: viewMode === 'list' ? 'var(--text-dark)' : 'var(--text-muted)', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', boxShadow: viewMode === 'list' ? 'var(--shadow-sm)' : 'none', transition: 'all 0.2s' }}>
+              <List size={16} /> List
+            </button>
+          </div>
         )}
       </div>
 
       {activeTab === 'history' && (
-        <div className="table-container">
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Challan #</th>
-                <th>Customer</th>
-                <th>Total Qty</th>
-                <th>Status</th>
-                <th>Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              {challans.map((c) => (
-                <tr key={c.id} style={{ cursor: 'pointer' }} onClick={() => openChallanDetails(c.id)}>
-                  <td><strong>{c.challan_number}</strong></td>
-                  <td>{c.customer_name || '-'}</td>
-                  <td>{c.total_quantity}</td>
-                  <td>
-                    <span className={`badge ${c.status === 'Confirmed' ? 'badge-success' : 'badge-info'}`}>
-                      {c.status}
-                    </span>
-                  </td>
-                  <td>{new Date(c.created_at).toLocaleDateString()}</td>
-                </tr>
-              ))}
-              {challans.length === 0 && (
-                <tr>
-                  <td colSpan={5} style={{ textAlign: 'center', padding: '40px 20px' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', color: 'var(--text-muted)' }}>
-                      <FileSignature size={48} style={{ opacity: 0.2, marginBottom: '10px' }} />
-                      <p style={{ fontSize: '16px', fontWeight: 500 }}>No challans generated yet</p>
-                    </div>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+        viewMode === 'board' ? renderKanbanBoard() : renderTableView()
       )}
 
       {activeTab === 'create' && (
@@ -199,7 +335,7 @@ const Challans: React.FC = () => {
                     {products.map(p => <option key={p.id} value={p.id}>{p.name} (Stock: {p.current_stock})</option>)}
                   </select>
                   <input type="number" className="modern-input" required min="1" value={item.quantity} onChange={(e) => handleItemChange(index, 'quantity', e.target.value)} style={{ flex: 1 }} placeholder="Qty" />
-                  <div style={{ width: '100px', padding: '10px', backgroundColor: '#fff', borderRadius: '8px', textAlign: 'right', fontWeight: 500, border: '1px solid var(--border-color)' }}>
+                  <div style={{ width: '100px', padding: '10px', backgroundColor: '#fff', borderRadius: '8px', textAlign: 'right', fontWeight: 500, border: '1px solid var(--border-color)', color: '#000' }}>
                     ${(item.quantity * item.unit_price).toFixed(2)}
                   </div>
                   {items.length > 1 && (

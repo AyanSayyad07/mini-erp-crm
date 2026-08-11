@@ -126,3 +126,19 @@ export const getChallanById = async (req: Request, res: Response): Promise<void>
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+
+export const updateChallanStatus = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+    const result = await pool.query('UPDATE challans SET status = $1 WHERE id = $2 RETURNING *', [status, id]);
+    if (result.rows.length === 0) {
+      res.status(404).json({ message: 'Challan not found' });
+      return;
+    }
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Users, Package, FileText, LogOut, Sun, Moon, Menu, X } from 'lucide-react';
+import { LayoutDashboard, Users, Package, FileText, LogOut, Sun, Moon, Menu, X, Shield } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../hooks/useTheme';
+import CommandPalette from './CommandPalette';
 
 const navLinkStyle = ({ isActive }: { isActive: boolean }) => ({
   padding: '16px 24px',
@@ -44,6 +45,7 @@ const Layout: React.FC = () => {
 
   return (
     <div style={{ display: 'flex', height: '100vh', width: '100vw', overflow: 'hidden' }}>
+      <CommandPalette />
       
       {/* Mobile Overlay */}
       {isMobileMenuOpen && (
@@ -71,7 +73,10 @@ const Layout: React.FC = () => {
         }}
       >
         <div style={{ padding: '24px', borderBottom: '1px solid var(--border-glass)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h2 style={{ margin: 0, fontSize: '24px', fontWeight: 700, color: 'var(--accent-primary)', letterSpacing: '-0.5px' }}>Mini ERP</h2>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <img src="/logo.svg" alt="Loop Distribution.co Logo" style={{ width: '32px', height: '32px' }} />
+            <h2 style={{ margin: 0, fontSize: '20px', fontWeight: 700, color: 'var(--accent-primary)', letterSpacing: '-0.5px' }}>Loop Distribution.co</h2>
+          </div>
           <button className="mobile-close" onClick={() => setIsMobileMenuOpen(false)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)' }}>
             <X size={24} />
           </button>

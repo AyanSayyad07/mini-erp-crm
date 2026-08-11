@@ -67,8 +67,8 @@ const Login: React.FC = () => {
           transition={{ duration: 0.8 }}
           style={{ zIndex: 2, textAlign: 'center' }}
         >
-          <ShieldCheck size={80} style={{ marginBottom: '20px', opacity: 0.9 }} />
-          <h1 style={{ fontSize: '3rem', fontWeight: 700, marginBottom: '10px' }}>Mini ERP</h1>
+          <img src="/logo.svg" alt="Loop Logo" style={{ width: '80px', height: '80px', marginBottom: '20px', opacity: 0.9 }} />
+          <h1 style={{ fontSize: '3rem', fontWeight: 700, marginBottom: '10px' }}>Loop Distribution.co</h1>
           <p style={{ fontSize: '1.2rem', opacity: 0.8 }}>Secure. Fast. Intuitive.</p>
         </motion.div>
         
