@@ -22,8 +22,8 @@ const Customers: React.FC = () => {
   const fetchCustomers = async () => {
     setLoading(true);
     try {
-      const res = await api.get('/customers', { params: { search, status } });
-      setCustomers(res.data);
+      const res = await api.get('/customers', { params: { search, status, limit: 100 } });
+      setCustomers(res.data.data || res.data);
     } catch (err) {
       console.error(err);
     } finally {

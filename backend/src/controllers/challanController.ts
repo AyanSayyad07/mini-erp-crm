@@ -137,8 +137,8 @@ export const updateChallanStatus = async (req: Request, res: Response): Promise<
       return;
     }
     res.json(result.rows[0]);
-  } catch (error) {
+  } catch (error: any) {
     console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: 'Internal server error', error: error.message });
   }
 };

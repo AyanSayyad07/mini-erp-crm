@@ -33,3 +33,5 @@ initDb().then(() => {
     console.log(`Server is running on port ${port}`);
   });
 });
+
+// Trigger restart for schema update

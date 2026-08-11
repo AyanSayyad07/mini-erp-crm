@@ -53,7 +53,7 @@ CREATE TABLE challans (
     challan_number VARCHAR(100) UNIQUE NOT NULL,
     customer_id INT REFERENCES customers(id),
     total_quantity INT NOT NULL DEFAULT 0,
-    status VARCHAR(50) CHECK (status IN ('Draft', 'Confirmed', 'Cancelled')) DEFAULT 'Draft',
+    status VARCHAR(50) CHECK (status IN ('Draft', 'Confirmed', 'Delivered', 'Paid', 'Cancelled')) DEFAULT 'Draft',
     created_by INT REFERENCES users(id),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
