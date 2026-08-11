@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ShieldCheck, User } from 'lucide-react';
+import { ShieldCheck, User, Sun, Moon } from 'lucide-react';
+import { useTheme } from '../hooks/useTheme';
 import api from '../services/api';
 
 const Login: React.FC = () => {
@@ -9,6 +10,7 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { theme, toggleTheme } = useTheme();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,8 +45,22 @@ const Login: React.FC = () => {
         alignItems: 'center',
         background: 'linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%)',
         color: 'white',
-        position: 'relative'
+        position: 'relative',
+        transition: 'background 0.5s ease'
       }}>
+        {/* Theme Toggle on Login Page */}
+        <button 
+          onClick={toggleTheme} 
+          style={{ 
+            position: 'absolute', top: '30px', left: '30px', zIndex: 10,
+            background: 'rgba(255, 255, 255, 0.2)', border: 'none', cursor: 'pointer', 
+            color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center',
+            width: '40px', height: '40px', borderRadius: '50%', backdropFilter: 'blur(5px)'
+          }}
+        >
+          {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+        </button>
+
         <motion.div 
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}

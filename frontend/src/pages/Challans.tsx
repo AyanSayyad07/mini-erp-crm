@@ -138,11 +138,7 @@ const Challans: React.FC = () => {
                   <td>{c.customer_name || '-'}</td>
                   <td>{c.total_quantity}</td>
                   <td>
-                    <span style={{
-                      padding: '4px 8px', borderRadius: '12px', fontSize: '12px', fontWeight: 600,
-                      backgroundColor: c.status === 'Confirmed' ? '#e6f4ea' : '#e8f0fe',
-                      color: c.status === 'Confirmed' ? '#137333' : '#1967d2'
-                    }}>
+                    <span className={`badge ${c.status === 'Confirmed' ? 'badge-success' : 'badge-info'}`}>
                       {c.status}
                     </span>
                   </td>
@@ -200,7 +196,7 @@ const Challans: React.FC = () => {
                     ${(item.quantity * item.unit_price).toFixed(2)}
                   </div>
                   {items.length > 1 && (
-                    <button type="button" onClick={() => removeItemRow(index)} style={{ padding: '10px', cursor: 'pointer', backgroundColor: '#fce8e6', border: 'none', color: '#c5221f', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <button type="button" onClick={() => removeItemRow(index)} style={{ padding: '10px', cursor: 'pointer', backgroundColor: 'var(--danger-bg)', border: 'none', color: 'var(--danger-text)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <X size={18} />
                     </button>
                   )}
@@ -231,7 +227,7 @@ const Challans: React.FC = () => {
               <div style={{ flex: 1 }}>
                 <p style={{ marginBottom: '8px' }}><strong style={{ color: 'var(--text-muted)' }}>Customer:</strong><br/>{selectedChallan.customer_name}</p>
                 <p style={{ marginBottom: '8px' }}><strong style={{ color: 'var(--text-muted)' }}>Mobile:</strong><br/>{selectedChallan.mobile}</p>
-                <p><strong style={{ color: 'var(--text-muted)' }}>Status:</strong><br/><span style={{ color: selectedChallan.status === 'Confirmed' ? '#137333' : '#1967d2', fontWeight: 600 }}>{selectedChallan.status}</span></p>
+                <p><strong style={{ color: 'var(--text-muted)' }}>Status:</strong><br/><span className={`badge ${selectedChallan.status === 'Confirmed' ? 'badge-success' : 'badge-info'}`}>{selectedChallan.status}</span></p>
               </div>
               <div style={{ flex: 1 }}>
                 <p style={{ marginBottom: '8px' }}><strong style={{ color: 'var(--text-muted)' }}>Date:</strong><br/>{new Date(selectedChallan.created_at).toLocaleString()}</p>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Plus, Users, Calendar, Filter } from 'lucide-react';
+import { Search, Plus, Users, Filter } from 'lucide-react';
 import api from '../services/api';
 
 const Customers: React.FC = () => {
@@ -75,11 +75,12 @@ const Customers: React.FC = () => {
             onChange={(e) => setStatus(e.target.value)}
             style={{ paddingLeft: '40px', appearance: 'none' }}
           >
-          <option value="">All Statuses</option>
-          <option value="Lead">Lead</option>
-          <option value="Active">Active</option>
-          <option value="Inactive">Inactive</option>
-        </select>
+            <option value="">All Statuses</option>
+            <option value="Lead">Lead</option>
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+          </select>
+        </div>
       </div>
 
       <div className="table-container">
@@ -105,11 +106,7 @@ const Customers: React.FC = () => {
                 <td>{c.mobile}</td>
                 <td>{c.customer_type}</td>
                 <td>
-                  <span style={{
-                    padding: '4px 8px', borderRadius: '12px', fontSize: '12px', fontWeight: 600,
-                    backgroundColor: c.status === 'Active' ? '#e6f4ea' : c.status === 'Lead' ? '#e8f0fe' : '#fce8e6',
-                    color: c.status === 'Active' ? '#137333' : c.status === 'Lead' ? '#1967d2' : '#c5221f'
-                  }}>
+                  <span className={`badge ${c.status === 'Active' ? 'badge-success' : c.status === 'Inactive' ? 'badge-danger' : 'badge-info'}`}>
                     {c.status}
                   </span>
                 </td>
@@ -137,31 +134,31 @@ const Customers: React.FC = () => {
             <h3 style={{ marginBottom: '20px' }}>Add New Customer</h3>
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
               <div style={{ display: 'flex', gap: '15px' }}>
-                <input type="text" name="name" placeholder="Name *" required value={formData.name} onChange={handleInputChange} style={inputStyle} />
-                <input type="text" name="mobile" placeholder="Mobile *" required value={formData.mobile} onChange={handleInputChange} style={inputStyle} />
+                <input type="text" className="modern-input" name="name" placeholder="Name *" required value={formData.name} onChange={handleInputChange} />
+                <input type="text" className="modern-input" name="mobile" placeholder="Mobile *" required value={formData.mobile} onChange={handleInputChange} />
               </div>
               <div style={{ display: 'flex', gap: '15px' }}>
-                <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleInputChange} style={inputStyle} />
-                <input type="text" name="business_name" placeholder="Business Name" value={formData.business_name} onChange={handleInputChange} style={inputStyle} />
+                <input type="email" className="modern-input" name="email" placeholder="Email" value={formData.email} onChange={handleInputChange} />
+                <input type="text" className="modern-input" name="business_name" placeholder="Business Name" value={formData.business_name} onChange={handleInputChange} />
               </div>
               <div style={{ display: 'flex', gap: '15px' }}>
-                <input type="text" name="gst_number" placeholder="GST Number" value={formData.gst_number} onChange={handleInputChange} style={inputStyle} />
-                <select name="customer_type" value={formData.customer_type} onChange={handleInputChange} style={inputStyle}>
+                <input type="text" className="modern-input" name="gst_number" placeholder="GST Number" value={formData.gst_number} onChange={handleInputChange} />
+                <select name="customer_type" className="modern-input" value={formData.customer_type} onChange={handleInputChange}>
                   <option value="Retail">Retail</option>
                   <option value="Wholesale">Wholesale</option>
                   <option value="Distributor">Distributor</option>
                 </select>
               </div>
               <div style={{ display: 'flex', gap: '15px' }}>
-                <select name="status" value={formData.status} onChange={handleInputChange} style={inputStyle}>
+                <select name="status" className="modern-input" value={formData.status} onChange={handleInputChange}>
                   <option value="Lead">Lead</option>
                   <option value="Active">Active</option>
                   <option value="Inactive">Inactive</option>
                 </select>
-                <input type="date" name="follow_up_date" value={formData.follow_up_date} onChange={handleInputChange} style={inputStyle} />
+                <input type="date" className="modern-input" name="follow_up_date" value={formData.follow_up_date} onChange={handleInputChange} />
               </div>
-              <textarea name="address" placeholder="Address" value={formData.address} onChange={handleInputChange} style={{ ...inputStyle, minHeight: '60px' }} />
-              <textarea name="notes" placeholder="Notes" value={formData.notes} onChange={handleInputChange} style={{ ...inputStyle, minHeight: '60px' }} />
+              <textarea name="address" className="modern-input" placeholder="Address" value={formData.address} onChange={handleInputChange} style={{ minHeight: '60px' }} />
+              <textarea name="notes" className="modern-input" placeholder="Notes" value={formData.notes} onChange={handleInputChange} style={{ minHeight: '60px' }} />
               
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '10px' }}>
                 <button type="button" className="btn" style={{ backgroundColor: 'var(--text-muted)' }} onClick={() => setIsModalOpen(false)}>Cancel</button>
@@ -177,15 +174,12 @@ const Customers: React.FC = () => {
 
 const modalOverlayStyle: React.CSSProperties = {
   position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-  backgroundColor: 'rgba(0,0,0,0.4)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000
+  backgroundColor: 'rgba(0,0,0,0.4)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000,
+  backdropFilter: 'blur(5px)'
 };
 
 const modalContentStyle: React.CSSProperties = {
   width: '600px', maxHeight: '90vh', overflowY: 'auto'
-};
-
-const inputStyle = {
-  padding: '10px', borderRadius: '4px', border: '1px solid var(--border-color)', flex: 1, outline: 'none'
 };
 
 export default Customers;

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Users, Package, FileText, LogOut } from 'lucide-react';
+import { LayoutDashboard, Users, Package, FileText, LogOut, Sun, Moon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTheme } from '../hooks/useTheme';
 
 const navLinkStyle = ({ isActive }: { isActive: boolean }) => ({
   padding: '16px 24px',
@@ -20,6 +21,7 @@ const Layout: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [user, setUser] = useState<any>(null);
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     const userData = localStorage.getItem('user');
@@ -40,7 +42,7 @@ const Layout: React.FC = () => {
       <aside style={{ 
         width: '260px', 
         backgroundColor: 'var(--sidebar-bg)', 
-        borderRight: '1px solid rgba(255, 255, 255, 0.5)',
+        borderRight: '1px solid var(--border-glass)',
         backdropFilter: 'blur(10px)',
         display: 'flex',
         flexDirection: 'column',
@@ -68,16 +70,27 @@ const Layout: React.FC = () => {
           height: '70px', 
           backgroundColor: 'var(--sidebar-bg)', 
           backdropFilter: 'blur(10px)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.5)',
+          borderBottom: '1px solid var(--border-glass)',
           display: 'flex',
           justifyContent: 'flex-end',
           alignItems: 'center',
           padding: '0 30px',
           boxShadow: 'var(--shadow-sm)',
-          zIndex: 5
+          zIndex: 5,
+          gap: '20px'
         }}>
+          <button 
+            onClick={toggleTheme} 
+            style={{ 
+              background: 'transparent', border: 'none', cursor: 'pointer', 
+              color: 'var(--text-muted)', display: 'flex', alignItems: 'center' 
+            }}
+          >
+            {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+          </button>
+
           {user && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '20px', borderLeft: '1px solid var(--border-color)', paddingLeft: '20px' }}>
               <span style={{ color: 'var(--text-muted)', fontSize: '14px' }}>
                 <strong style={{ color: 'var(--text-dark)' }}>{user.role}</strong> | {user.email}
               </span>

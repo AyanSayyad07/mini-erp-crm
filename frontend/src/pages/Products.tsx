@@ -106,10 +106,7 @@ const Products: React.FC = () => {
                   <td>
                     {p.current_stock}
                     {lowStock && (
-                      <span style={{ 
-                        marginLeft: '10px', padding: '4px 8px', borderRadius: '12px', fontSize: '11px', 
-                        backgroundColor: '#fce8e6', color: '#c5221f', fontWeight: 'bold' 
-                      }}>
+                      <span className="badge badge-danger" style={{ marginLeft: '10px', fontSize: '11px', padding: '4px 8px' }}>
                         Low Stock
                       </span>
                     )}
